@@ -27,7 +27,7 @@ phases:
       - echo "Checking deployment status..."
       - kubectl rollout status deployment/brain-tasks-app
       - kubectl get services
-      - echo "Deployment completed successfully!"
+      - echo "Application URL: http://a22cd6d9ea0a54c30ae408bd20466fcf-2084000083.ap-south-1.elb.amazonaws.com"
 
 artifacts:
   files:
