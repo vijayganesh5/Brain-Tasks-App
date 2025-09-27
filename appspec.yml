@@ -1,0 +1,17 @@
+# appspec.yml
+version: 0.0
+Resources:
+  - TargetService:
+      Type: AWS::EKS::Service
+      Properties:
+        ClusterName: "brain-tasks-cluster"
+        ServiceName: "brain-tasks-service"
+        Image: "377728961900.dkr.ecr.ap-south-1.amazonaws.com/brain-tasks-app:latest"
+        Port: 80
+
+Hooks:
+  - BeforeInstall: "BeforeInstall"
+  - AfterInstall: "AfterInstall"
+  - AfterAllowTestTraffic: "AfterAllowTestTraffic"
+  - BeforeAllowTraffic: "BeforeAllowTraffic"
+  - AfterAllowTraffic: "AfterAllowTraffic"
