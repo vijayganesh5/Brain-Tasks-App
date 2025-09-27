@@ -9,11 +9,11 @@ phases:
       - mv kubectl /usr/local/bin/
   build:
     commands:
-      - docker build -t brain-task-app .
+      - docker build -t brain-tasks-app .
       - docker tag brain-tasks-app:latest 377728961900.dkr.ecr.ap-south-1.amazonaws.com/brain-tasks-app:latest
   post_build:
     commands:
-      - docker push 377728961900.dkr.ecr.ap-south-1.amazonaws.com/brain-task-app:latest
+      - docker push 377728961900.dkr.ecr.ap-south-1.amazonaws.com/brain-tasks-app:latest
       - aws eks update-kubeconfig --region ap-south-1 --name brain-tasks-cluster
       - export KUBECONFIG=/root/.kube/config
       - kubectl apply -f deployment.yaml --validate=false
