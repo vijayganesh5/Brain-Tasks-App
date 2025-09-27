@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: cloudwatch-agent-config
+data:
+  cloudwatch-config.json: |
+    {
+      "logs": {
+        "metrics_collected": {
+          "kubernetes": {}
+        },
+        "force_flush_interval": 5
+      }
+    }
