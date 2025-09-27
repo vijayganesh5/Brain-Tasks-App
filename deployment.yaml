@@ -5,7 +5,7 @@ metadata:
   labels:
     app: brain-tasks-app
 spec:
-  replicas: 3
+  replicas: 2
   selector:
     matchLabels:
       app: brain-tasks-app
@@ -15,7 +15,17 @@ spec:
         app: brain-tasks-app
     spec:
       containers:
-      - name: brain-tasks-app
-        image: 377728961900.dkr.ecr.ap-south-1.amazonaws.com/brain-tasks-app:latest
-        ports:
-        - containerPort: 80
+        - name: brain-tasks-app
+          image: 377728961900.dkr.ecr.ap-south-1.amazonaws.com/brain-tasks-app:latest
+          ports:
+            - containerPort: 3000
+          resources:
+            requests:
+              cpu: "250m"
+              memory: "512Mi"
+            limits:
+              cpu: "500m"
+              memory: "1Gi"
+          imagePullPolicy: Always
+---
+
