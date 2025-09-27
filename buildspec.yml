@@ -4,16 +4,22 @@ version: 0.2
 phases:
   pre_build:
     commands:
+      - echo "Installing necessary tools..."
+      - apt-get update
+      - apt-get install -y awscli curl
+      - curl -O https://s3.us-west-2.amazonaws.com/amazon-eks/1.28.3/2023-11-14/bin/linux/amd64/kubectl
+      - chmod +x ./kubectl
+      - mv ./kubectl /usr/local/bin
       - echo "Logging in to Amazon ECR..."
       - aws ecr get-login-password --region ap-south-1 | docker login --username AWS --password-stdin 377728961900.dkr.ecr.ap-south-1.amazonaws.com
       - echo "Logged in to ECR successfully"
-      
+
   build:
     commands:
       - echo "Building the Docker image..."
       - docker build -t brain-tasks-app .
       - docker tag brain-tasks-app:latest 377728961900.dkr.ecr.ap-south-1.amazonaws.com/brain-tasks-app:latest
-      
+
   post_build:
     commands:
       - echo "Pushing the Docker image to ECR..."
@@ -28,8 +34,3 @@ phases:
 artifacts:
   files:
     - '**/*'
-  base-directory: dist
-
-cache:
-  paths:
-    - 'node_modules/**/*'
