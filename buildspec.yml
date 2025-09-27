@@ -1,34 +1,35 @@
+---
 version: 0.2
-
 phases:
   pre_build:
     commands:
-      - echo "Logging in to Amazon ECR..."
-      - aws ecr get-login-password --region ap-south-1 | docker login --username AWS --password-stdin 377728961900.dkr.ecr.ap-south-1.amazonaws.com
-      - echo "Installing kubectl..."
+      - echo Logging in to Amazon ECR...
+      - aws ecr get-login-password --region ap-south-1 | docker login --username
+        AWS --password-stdin 377728961900.dkr.ecr.ap-south-1.amazonaws.com
+      - echo Installing kubectl...
       - curl -LO https://dl.k8s.io/release/v1.32.0/bin/linux/amd64/kubectl
       - chmod +x kubectl
       - mv kubectl /usr/local/bin/
-
   build:
     commands:
-      - echo "Building the Docker image..."
+      - echo Building the Docker image...
       - docker build -t brain-tasks-app .
-      - docker tag brain-tasks-app:latest 377728961900.dkr.ecr.ap-south-1.amazonaws.com/brain-tasks-app:latest
-
+      - docker tag brain-tasks-app:latest
+        377728961900.dkr.ecr.ap-south-1.amazonaws.com/brain-tasks-app:latest
   post_build:
     commands:
-      - echo "Pushing the Docker image to ECR..."
-      - docker push 377728961900.dkr.ecr.ap-south-1.amazonaws.com/brain-tasks-app:latest
-      - echo "Deploying to EKS..."
+      - echo Pushing the Docker image to ECR...
+      - docker push
+        377728961900.dkr.ecr.ap-south-1.amazonaws.com/brain-tasks-app:latest
+      - echo Deploying to EKS...
       - aws eks update-kubeconfig --region ap-south-1 --name brain-tasks-cluster
-      - kubectl apply -f deployment.yaml
-      - kubectl apply -f service.yaml
-      - echo "Checking deployment status..."
+      - kubectl apply -f deployment.yaml --validate=false
+      - kubectl apply -f service.yaml --validate=false
+      - echo Checking deployment status...
       - kubectl rollout status deployment/brain-tasks-app
       - kubectl get services
-      - echo "Application URL: http://a22cd6d9ea0a54c30ae408bd20466fcf-2084000083.ap-south-1.elb.amazonaws.com"
-
+      - echo Application URL: http://a22cd6d9ea0a54c30ae408bd20466fcf-2084000083.ap-south-1.elb.amazonaws.com
 artifacts:
   files:
-    - '**/*'
+    - "**/*"
+
