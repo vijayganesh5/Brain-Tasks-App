@@ -1,36 +1,20 @@
-# buildspec.yml
 version: 0.2
-
 phases:
   pre_build:
     commands:
-      - echo "Installing necessary tools..."
-      - yum update -y
-      - yum install -y awscli curl
-      - curl -O https://s3.us-west-2.amazonaws.com/amazon-eks/1.28.3/2023-11-14/bin/linux/amd64/kubectl
-      - sudo chmod +x ./kubectl
-      - sudo mv ./kubectl /usr/local/bin
-      - echo "Logging in to Amazon ECR..."
+      - echo Logging in to Amazon ECR...
       - aws ecr get-login-password --region ap-south-1 | docker login --username AWS --password-stdin 377728961900.dkr.ecr.ap-south-1.amazonaws.com
-      - echo "Logged in to ECR successfully"
-
+      - curl -LO https://dl.k8s.io/release/v1.32.0/bin/linux/amd64/kubectl
+      - chmod +x kubectl
+      - mv kubectl /usr/local/bin/
   build:
     commands:
-      - echo "Building the Docker image..."
-      - sudo docker build -t brain-tasks-app .
-      - sudo docker tag brain-tasks-app:latest 377728961900.dkr.ecr.ap-south-1.amazonaws.com/brain-tasks-app:latest
-
+      - docker build -t brain-task-app .
+      - docker tag brain-tasks-app:latest 377728961900.dkr.ecr.ap-south-1.amazonaws.com/brain-tasks-app:latest
   post_build:
     commands:
-      - echo "Pushing the Docker image to ECR..."
-      - sudo docker push 377728961900.dkr.ecr.ap-south-1.amazonaws.com/brain-tasks-app:latest
-      - echo "Deploying to EKS cluster..."
+      - docker push 377728961900.dkr.ecr.ap-south-1.amazonaws.com/brain-task-app:latest
       - aws eks update-kubeconfig --region ap-south-1 --name brain-tasks-cluster
-      - kubectl apply -f deployment.yaml
+      - export KUBECONFIG=/root/.kube/config
+      - kubectl apply -f deployment.yaml --validate=false
       - kubectl apply -f service.yaml
-      - kubectl rollout status deployment/brain-tasks-app
-      - echo "Deployment completed successfully"
-
-artifacts:
-  files:
-    - '**/*'
