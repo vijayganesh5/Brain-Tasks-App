@@ -1,0 +1,16 @@
+apiVersion: v1
+data:
+  mapRoles: |
+    - rolearn: arn:aws:iam::377728961900:role/eksctl-brain-tasks-cluster-nodegro-NodeInstanceRole-iluaPRjthDV0
+      username: system:node:{{EC2PrivateDNSName}}
+      groups:
+      - system:bootstrappers
+      - system:nodes
+    - rolearn: arn:aws:iam::377728961900:role/BrainTasksApp-CodeBuild-Role
+      username: codebuild-user
+      groups:
+      - system:masters
+kind: ConfigMap
+metadata:
+  name: aws-auth
+  namespace: kube-system
