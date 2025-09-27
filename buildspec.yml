@@ -5,8 +5,8 @@ phases:
   pre_build:
     commands:
       - echo "Installing necessary tools..."
-      - sudo apt-get update
-      - sudo apt-get install -y awscli curl
+      - yum update -y
+      - yum install -y awscli curl
       - curl -O https://s3.us-west-2.amazonaws.com/amazon-eks/1.28.3/2023-11-14/bin/linux/amd64/kubectl
       - sudo chmod +x ./kubectl
       - sudo mv ./kubectl /usr/local/bin
