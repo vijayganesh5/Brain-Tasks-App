@@ -1,0 +1,26 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: aws-auth
+  namespace: kube-system
+data:
+  mapRoles: |
+    # Node Instance Role for worker nodes
+    - rolearn: arn:aws:iam::377728961900:role/eksctl-brain-tasks-cluster-nodegro-NodeInstanceRole-ZPhUXDGLTNlJ
+      username: system:node:{{EC2PrivateDNSName}}
+      groups:
+        - system:bootstrappers
+        - system:nodes
+
+    # CodeBuild Role for deployments
+    - rolearn: arn:aws:iam::377728961900:role/codebuild-Brain-Tasks-App-CB-service-role-updated
+      username: codebuild
+      groups:
+        - system:masters
+
+    # CodePipeline Deploy Role
+    - rolearn: arn:aws:iam::377728961900:role/CodePipeline-Brain-Tasks-App-DeployRole   # <- Replace with your actual CodePipeline deploy role ARN
+      username: codepipeline
+      groups:
+        - system:masters
+
