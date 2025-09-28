@@ -1,33 +1,43 @@
 version: 0.2
 
+env:
+  variables:
+    AWS_DEFAULT_REGION: "ap-south-1"
+    CLUSTER_NAME: "brain-tasks-cluster"
+    REPOSITORY_URI: "377728961900.dkr.ecr.ap-south-1.amazonaws.com/brain-tasks-app"
+
 phases:
+  install:
+    runtime-versions:
+      docker: 24
+    commands:
+      - echo Installing kubectl...
+      - curl -LO "https://dl.k8s.io/release/v1.32.0/bin/linux/amd64/kubectl"
+      - chmod +x kubectl
+      - mv kubectl /usr/local/bin/
   pre_build:
     commands:
       - echo Logging in to Amazon ECR...
-      - aws ecr get-login-password --region ap-south-1 | docker login --username AWS --password-stdin 377728961900.dkr.ecr.ap-south-1.amazonaws.com
-      - echo Installing kubectl...
-      - curl -LO https://dl.k8s.io/release/v1.32.0/bin/linux/amd64/kubectl
-      - chmod +x kubectl
-      - mv kubectl /usr/local/bin/
-
+      - aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $REPOSITORY_URI
   build:
     commands:
       - echo Building the Docker image...
       - docker build -t brain-tasks-app .
-      - docker tag brain-tasks-app:latest 377728961900.dkr.ecr.ap-south-1.amazonaws.com/brain-tasks-app:latest
-
+      - docker tag brain-tasks-app:latest $REPOSITORY_URI:latest
   post_build:
     commands:
       - echo Pushing the Docker image to ECR...
-      - docker push 377728961900.dkr.ecr.ap-south-1.amazonaws.com/brain-tasks-app:latest
+      - docker push $REPOSITORY_URI:latest
+      - echo Updating kubeconfig for EKS...
+      - aws eks update-kubeconfig --region $AWS_DEFAULT_REGION --name $CLUSTER_NAME
+      - echo Updating deployment.yaml image path...
+      - sed -i "s|377728961900.dkr.ecr.ap-south-1.amazonaws.com/brain-tasks-app:latest|$REPOSITORY_URI:latest|" k8s/deployment.yaml
+      - echo Listing k8s folder contents to verify...
+      - ls -R k8s/
       - echo Deploying to EKS...
-      - aws eks update-kubeconfig --region ap-south-1 --name brain-tasks-cluster
-      - kubectl apply -f deployment.yaml --validate=false
-      - kubectl apply -f service.yaml --validate=false
-      - echo Checking deployment status...
+      - kubectl apply -f k8s/deployment.yaml --validate=false
+      - echo Waiting for rollout to complete...
       - kubectl rollout status deployment/brain-tasks-app
-      - kubectl get services
-      - echo Application URL will be available via LoadBalancer service.
 
 artifacts:
   files:
