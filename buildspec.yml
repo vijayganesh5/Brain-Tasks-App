@@ -1,43 +1,34 @@
 version: 0.2
 
-env:
-  variables:
-    IMAGE_REPO_NAME: brain-tasks-app
-    AWS_DEFAULT_REGION: ap-south-1
-    ECR_ACCOUNT_ID: 377728961900
-
 phases:
   install:
-    runtime-versions:
-      docker: 20
     commands:
       - echo Installing dependencies...
-      - apk add --no-cache curl bash
-
-  pre_build:
-    commands:
-      - echo Logging in to Amazon ECR...
-      - aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $ECR_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com
-      - echo Installing kubectl...
       - curl -LO "https://dl.k8s.io/release/v1.32.0/bin/linux/amd64/kubectl"
       - chmod +x kubectl
       - mv kubectl /usr/local/bin/
 
+  pre_build:
+    commands:
+      - echo Logging in to Amazon ECR...
+      - aws ecr get-login-password --region ap-south-1 | docker login --username AWS --password-stdin 377728961900.dkr.ecr.ap-south-1.amazonaws.com
+
   build:
     commands:
       - echo Building the Docker image...
-      - docker build -t $IMAGE_REPO_NAME:latest .
-      - docker tag $IMAGE_REPO_NAME:latest $ECR_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$IMAGE_REPO_NAME:latest
+      - docker build -t brain-tasks-app .
+
+      # Tag the image for ECR
+      - docker tag brain-tasks-app:latest 377728961900.dkr.ecr.ap-south-1.amazonaws.com/brain-tasks-app:latest
 
   post_build:
     commands:
       - echo Pushing the Docker image to ECR...
-      - docker push $ECR_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$IMAGE_REPO_NAME:latest
-      - echo Updating kubeconfig for EKS...
-      - aws eks update-kubeconfig --region $AWS_DEFAULT_REGION --name brain-tasks-cluster
-      - echo Deploying to EKS using scripts...
+      - docker push 377728961900.dkr.ecr.ap-south-1.amazonaws.com/brain-tasks-app:latest
+      - echo Deploying to EKS...
+      - aws eks update-kubeconfig --region ap-south-1 --name brain-tasks-cluster
       - bash scripts/deploy-to-eks.sh
-      - echo Validating deployment...
+      - echo Running validation script...
       - bash scripts/validate-service.sh
 
 artifacts:
