@@ -1,0 +1,37 @@
+version: 0.2
+
+env:
+  variables:
+    CLUSTER_NAME: "brain-tasks-cluster"
+    REGION: "ap-south-1"
+    REPOSITORY_URI: "377728961900.dkr.ecr.ap-south-1.amazonaws.com/brain-tasks-app"
+
+phases:
+  pre_build:
+    commands:
+      - echo Logging in to Amazon ECR...
+      - aws ecr get-login-password --region $REGION | docker login --username AWS --password-stdin $REPOSITORY_URI
+      - echo Getting EKS credentials...
+      - aws eks update-kubeconfig --region $REGION --name $CLUSTER_NAME
+
+  build:
+    commands:
+      - echo Building Docker image...
+      - docker build -t brain-tasks-app .
+      - docker tag brain-tasks-app:latest $REPOSITORY_URI:latest
+
+  post_build:
+    commands:
+      - echo Pushing Docker image to ECR...
+      - docker push $REPOSITORY_URI:latest
+      - echo Updating Kubernetes deployment...
+      - sed -i "s|377728961900.dkr.ecr.ap-south-1.amazonaws.com/brain-tasks-app:latest|$REPOSITORY_URI:latest|" k8s/deployment.yaml
+      - kubectl apply -f k8s/deployment.yaml
+      - kubectl apply -f k8s/service.yaml
+      - echo Deployment complete!
+
+artifacts:
+  files:
+    - k8s/deployment.yaml
+    - k8s/service.yaml
+

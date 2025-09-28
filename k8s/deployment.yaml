@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: brain-tasks-app
+  labels:
+    app: brain-tasks-app
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: brain-tasks-app
+  template:
+    metadata:
+      labels:
+        app: brain-tasks-app
+    spec:
+      containers:
+      - name: brain-tasks-app
+        image: 377728961900.dkr.ecr.ap-south-1.amazonaws.com/brain-tasks-app:latest
+        ports:
+        - containerPort: 80   # Nginx listens on port 80
+
