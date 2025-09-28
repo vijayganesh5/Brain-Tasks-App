@@ -19,7 +19,7 @@ data:
         - system:masters
 
     # CodePipeline Deploy Role
-    - rolearn: arn:aws:iam::377728961900:role/CodePipeline-Brain-Tasks-App-DeployRole   # <- Replace with your actual CodePipeline deploy role ARN
+    - rolearn: arn:aws:iam::377728961900:role/AWSCodePipelineServiceRole-ap-south-1-Brain-Tasks-App-CP   # <- Replace with your actual CodePipeline deploy role ARN
       username: codepipeline
       groups:
         - system:masters
