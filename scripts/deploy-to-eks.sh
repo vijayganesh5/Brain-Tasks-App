@@ -1,14 +1,14 @@
 #!/bin/bash
 set -e
+echo "Ì∫Ä Deploying Brain Tasks App to EKS..."
 
-# Get the directory where this script is located
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+# Apply manifests
+kubectl apply -f k8s/deployment.yaml
+kubectl apply -f k8s/service.yaml
 
-echo "Deploying Brain Tasks App to EKS from $SCRIPT_DIR ..."
+# Wait for deployment rollout
+echo "‚è≥ Waiting for deployment to finish..."
+kubectl rollout status deployment/brain-tasks-app --timeout=180s
 
-# Apply Kubernetes manifests using absolute paths
-kubectl apply -f "$SCRIPT_DIR/../k8s/deployment.yaml"
-kubectl apply -f "$SCRIPT_DIR/../k8s/service.yaml"
-
-echo "Deployment completed!"
+echo "‚úÖ Deployment completed successfully!"
 
