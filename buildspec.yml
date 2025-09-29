@@ -25,11 +25,6 @@ phases:
     commands:
       - echo Pushing the Docker image to ECR...
       - docker push 377728961900.dkr.ecr.ap-south-1.amazonaws.com/brain-tasks-app:latest
-      - echo Deploying to EKS...
-      - aws eks update-kubeconfig --region ap-south-1 --name brain-tasks-cluster
-      - bash scripts/deploy-to-eks.sh
-      - echo Running validation script...
-      - bash scripts/validate-service.sh
 
 artifacts:
   files:
