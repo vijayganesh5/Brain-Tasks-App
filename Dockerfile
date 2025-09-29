@@ -1,5 +1,5 @@
 # Use Nginx to serve static files
-FROM nginx:alpine
+FROM nginx:latest
 
 # Set working directory
 WORKDIR /usr/share/nginx/html
