@@ -1,4 +1,4 @@
-# 🧠 Brain Tasks Application - Cloud Native Deployment Adventure! 🚀
+# 🧠 Brain Tasks Application - Cloud Native Deployment Adventure 🚀
 
 ## 🎯 Project Overview
 Welcome to the **Brain Tasks Application** - where brilliant ideas meet cutting-edge cloud technology! This isn't just another deployment; it's a full-scale CI/CD expedition that transforms your React code into a globally scalable, production-ready application on Amazon EKS. Get ready to embark on a cloud deployment journey like no other! 
