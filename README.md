@@ -196,7 +196,14 @@ echo "🎯 Mission complete! Cloud resources retired successfully!"
 
 ---
 
-**🌟 Congratulations, Cloud Explorer!** You've successfully deployed a production-ready React application using the full power of AWS cloud-native services! 
+**🌟 Congratulations, Cloud Explorer!** You've successfully deployed a production-ready React application using the full power of AWS cloud-native services!!
+
+---
+
+## 🎉 Output Link with Screenshots:
+- https://docs.google.com/document/d/1gzG8MRjKNU6mcj0hMBDAl8eu1Ar9zFG4tdGYDeUoqPk/edit?usp=sharing
+
+---
 
 *Built with ❤️ and AWS magic by Vijay Ganesh - Turning React code into scalable cloud applications, one deployment at a time!*
 
